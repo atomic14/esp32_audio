@@ -1,5 +1,7 @@
 # ESP32 I2S ADC Sampling
 
+Explanatory video [here](https://www.youtube.com/watch?v=pPh3_ciEmzs)
+
 [![Demo Video](https://img.youtube.com/vi/pPh3_ciEmzs/0.jpg)](https://www.youtube.com/watch?v=pPh3_ciEmzs)
 
 This project demonstrates how to use the ESP32 built-in Analog to Digital Converters.
