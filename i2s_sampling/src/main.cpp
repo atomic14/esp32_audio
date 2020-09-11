@@ -119,7 +119,7 @@ void setup()
 
   // internal analog to digital converter sampling using i2s
   // create our samplers
-  adcSampler = new ADCSampler(ADC_UNIT_1, ADC1_CHANNEL_6);
+  adcSampler = new ADCSampler(ADC_UNIT_1, ADC1_CHANNEL_7);
   // set up the adc sample writer task
   TaskHandle_t adcWriterTaskHandle;
   xTaskCreatePinnedToCore(adcWriterTask, "ADC Writer Task", 4096, adcSampler, 1, &adcWriterTaskHandle, 1);
