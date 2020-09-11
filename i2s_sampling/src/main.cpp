@@ -51,7 +51,19 @@ i2s_pin_config_t i2sPins = {
     .data_out_num = I2S_PIN_NO_CHANGE,
     .data_in_num = GPIO_NUM_33};
 
-// Task to write samples to our server
+// send data to a remote address
+void sendData(WiFiClient *wifiClient, HTTPClient *httpClient, const char *url, uint8_t *bytes, size_t count)
+{
+  // send them off to the server
+  digitalWrite(2, HIGH);
+  httpClient->begin(*wifiClientADC, url);
+  httpClient->addHeader("content-type", "application/octet-stream");
+  httpClient->POST(bytes, count);
+  httpClient->end();
+  digitalWrite(2, LOW);
+}
+
+// Task to write samples from ADC to our server
 void adcWriterTask(void *param)
 {
   I2SSampler *sampler = (I2SSampler *)param;
@@ -62,14 +74,7 @@ void adcWriterTask(void *param)
     uint32_t ulNotificationValue = ulTaskNotifyTake(pdTRUE, xMaxBlockTime);
     if (ulNotificationValue > 0)
     {
-      // send them off to the server
-      digitalWrite(2, HIGH);
-      Serial.println("Sending data");
-      httpClientADC->begin(*wifiClientADC, ADC_SERVER_URL);
-      httpClientADC->addHeader("content-type", "application/octet-stream");
-      httpClientADC->POST((uint8_t *)sampler->getCapturedAudioBuffer(), sampler->getBufferSizeInBytes());
-      httpClientADC->end();
-      digitalWrite(2, LOW);
+      sendData(wifiClientADC, httpClientADC, ADC_SERVER_URL, (uint8_t *)sampler->getCapturedAudioBuffer(), sampler->getBufferSizeInBytes());
     }
   }
 }
@@ -85,14 +90,7 @@ void i2sMemsWriterTask(void *param)
     uint32_t ulNotificationValue = ulTaskNotifyTake(pdTRUE, xMaxBlockTime);
     if (ulNotificationValue > 0)
     {
-      // send them off to the server
-      digitalWrite(2, HIGH);
-      Serial.println("Sending data");
-      httpClientI2S->begin(*wifiClientI2S, I2S_SERVER_URL);
-      httpClientI2S->addHeader("content-type", "application/octet-stream");
-      httpClientI2S->POST((uint8_t *)sampler->getCapturedAudioBuffer(), sampler->getBufferSizeInBytes());
-      httpClientI2S->end();
-      digitalWrite(2, LOW);
+      sendData(wifiClientADC, httpClientADC, I2S_SERVER_URL, (uint8_t *)sampler->getCapturedAudioBuffer(), sampler->getBufferSizeInBytes());
     }
   }
 }
@@ -119,18 +117,23 @@ void setup()
   wifiClientI2S = new WiFiClient();
   httpClientI2S = new HTTPClient();
 
+  // internal analog to digital converter sampling using i2s
   // create our samplers
-  adcSampler = new ADCSampler(ADC_UNIT_1, ADC1_CHANNEL_7);
-  i2sSampler = new I2SMEMSSampler(i2sPins, false);
+  adcSampler = new ADCSampler(ADC_UNIT_1, ADC1_CHANNEL_6);
   // set up the adc sample writer task
-  // TaskHandle_t adcWriterTaskHandle;
-  // xTaskCreatePinnedToCore(adcWriterTask, "ADC Writer Task", 4096, adcSampler, 1, &adcWriterTaskHandle, 1);
+  TaskHandle_t adcWriterTaskHandle;
+  xTaskCreatePinnedToCore(adcWriterTask, "ADC Writer Task", 4096, adcSampler, 1, &adcWriterTaskHandle, 1);
+  adcSampler->start(I2S_NUM_0, adcI2SConfig, 32768, adcWriterTaskHandle);
+
+  // Direct i2s input from INMP441 or the SPH0645
+  // i2sSampler = new I2SMEMSSampler(i2sPins, false);
+
   // set up the i2s sample writer task
-  TaskHandle_t i2sMemsWriterTaskHandle;
-  xTaskCreatePinnedToCore(i2sMemsWriterTask, "I2S Writer Task", 4096, i2sSampler, 1, &i2sMemsWriterTaskHandle, 1);
-  // start sampling
-  // adcSampler->start(I2S_NUM_0, adcI2SConfig, 32768, adcWriterTaskHandle);
-  i2sSampler->start(I2S_NUM_0, i2sMemsConfigBothChannels, 32768, i2sMemsWriterTaskHandle);
+  // TaskHandle_t i2sMemsWriterTaskHandle;
+  // xTaskCreatePinnedToCore(i2sMemsWriterTask, "I2S Writer Task", 4096, i2sSampler, 1, &i2sMemsWriterTaskHandle, 1);
+
+  // start sampling from i2s device
+  // i2sSampler->start(I2S_NUM_0, i2sMemsConfigBothChannels, 32768, i2sMemsWriterTaskHandle);
 }
 
 void loop()
