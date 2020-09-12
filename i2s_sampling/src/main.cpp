@@ -117,6 +117,7 @@ void setup()
   wifiClientI2S = new WiFiClient();
   httpClientI2S = new HTTPClient();
 
+  // input from analog microphones such as the MAX9814 or MAX4466
   // internal analog to digital converter sampling using i2s
   // create our samplers
   adcSampler = new ADCSampler(ADC_UNIT_1, ADC1_CHANNEL_7);
