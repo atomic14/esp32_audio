@@ -90,7 +90,7 @@ void i2sMemsWriterTask(void *param)
     uint32_t ulNotificationValue = ulTaskNotifyTake(pdTRUE, xMaxBlockTime);
     if (ulNotificationValue > 0)
     {
-      sendData(wifiClientADC, httpClientADC, I2S_SERVER_URL, (uint8_t *)sampler->getCapturedAudioBuffer(), sampler->getBufferSizeInBytes());
+      sendData(wifiClientI2S, httpClientI2S, I2S_SERVER_URL, (uint8_t *)sampler->getCapturedAudioBuffer(), sampler->getBufferSizeInBytes());
     }
   }
 }
@@ -124,7 +124,7 @@ void setup()
   // set up the adc sample writer task
   TaskHandle_t adcWriterTaskHandle;
   xTaskCreatePinnedToCore(adcWriterTask, "ADC Writer Task", 4096, adcSampler, 1, &adcWriterTaskHandle, 1);
-  adcSampler->start(I2S_NUM_0, adcI2SConfig, 32768, adcWriterTaskHandle);
+  adcSampler->start(I2S_NUM_0, adcI2SConfig, 16384, adcWriterTaskHandle);
 
   // Direct i2s input from INMP441 or the SPH0645
   // i2sSampler = new I2SMEMSSampler(i2sPins, false);
@@ -134,7 +134,7 @@ void setup()
   // xTaskCreatePinnedToCore(i2sMemsWriterTask, "I2S Writer Task", 4096, i2sSampler, 1, &i2sMemsWriterTaskHandle, 1);
 
   // start sampling from i2s device
-  // i2sSampler->start(I2S_NUM_0, i2sMemsConfigBothChannels, 32768, i2sMemsWriterTaskHandle);
+  // i2sSampler->start(I2S_NUM_1, i2sMemsConfigBothChannels, 32768, i2sMemsWriterTaskHandle);
 }
 
 void loop()
