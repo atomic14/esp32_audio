@@ -22,7 +22,7 @@ void ADCSampler::configureI2S()
  **/
 void ADCSampler::processI2SData(uint8_t *i2sData, size_t bytesRead)
 {
-    int16_t *rawSamples = (int16_t *)i2sData;
+    uint16_t *rawSamples = (uint16_t *)i2sData;
     for (int i = 0; i < bytesRead / 2; i++)
     {
         addSample((2048 - (rawSamples[i] & 0xfff)) * 15);
