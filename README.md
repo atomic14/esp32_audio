@@ -10,7 +10,11 @@ And for the two I2S boards (SPH0645 and INMP441) [here](https://www.youtube.com/
 
 This project demonstrates how to use the ESP32 built-in Analog to Digital Converters and I2S for capturing audio data.
 
-There are three projects in this repository: `loop_sampling`, `i2s_sampling` and `server`.
+There are four projects in this repository: `loop_sampling`, `i2s_sampling`, `i2s_output` and `server`.
+
+## server
+
+This is a simple `node` server that writes the samples received from the ESP32 to a file.
 
 ## loop_sampling
 
@@ -44,6 +48,22 @@ The current set of pin assignment in the code are:
 | ws_io_num   | GPIO_NUM_25 | I2S - LRCLK - left right clock |
 | data_in_num | GPIO_NUM_33 | I2S - Serial data              |
 
-## server
+## i2s_output
 
-This is a simple `node` server that writes the samples received from the ESP32 to a file.
+This example shows how to drive an I2S output device - I've tested this against the MAX98357 breakout board from Adafruit - https://learn.adafruit.com/adafruit-max98357-i2s-class-d-mono-amp
+
+There is an example WAV file that can be played or you can play a simple sin wave through the output.
+
+To play the WAV file you will need to download the file to the SPIFFS file system.
+
+This is now annoyingly hard to find on platform.io - watch this video to see how to find it.
+
+[![FS Upload](https://img.youtube.com/vi/Pxpg9eZLoBI/0.jpg)](https://www.youtube.com/watch?v=Pxpg9eZLoBI)
+
+The pins currently configured are:
+
+| Function     | GPIO Pin    | Notes                          |
+| ------------ | ----------- | ------------------------------ |
+| bck_io_num   | GPIO_NUM_27 | I2S - Serial clock             |
+| ws_io_num    | GPIO_NUM_14 | I2S - LRCLK - left right clock |
+| data_out_num | GPIO_NUM_26 | I2S - Serial data              |
