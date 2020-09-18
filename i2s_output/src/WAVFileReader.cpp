@@ -49,7 +49,7 @@ WAVFileReader::~WAVFileReader()
     m_file.close();
 }
 
-void WAVFileReader::getSamples(int16_t *samples, int number_frames)
+void WAVFileReader::getFrames(Frame_t *frames, int number_frames)
 {
     // fill the buffer with data from the file wrapping around if necessary
     for (int i = 0; i < number_frames; i++)
@@ -60,16 +60,16 @@ void WAVFileReader::getSamples(int16_t *samples, int number_frames)
             m_file.seek(44);
         }
         // read in the next sample to the left channel
-        m_file.read((uint8_t *)(samples + i * 2), sizeof(int16_t));
+        m_file.read((uint8_t *)(&frames[i].left), sizeof(int16_t));
         // if we only have one channel duplicate the sample for the right channel
         if (m_num_channels == 1)
         {
-            samples[i * 2 + 1] = samples[i * 2];
+            frames[i].right = frames[i].left;
         }
         else
         {
             // otherwise read in the right channel sample
-            m_file.read((uint8_t *)(samples + i * 2 + 1), sizeof(int16_t));
+            m_file.read((uint8_t *)(&frames[i].right), sizeof(int16_t));
         }
     }
 }

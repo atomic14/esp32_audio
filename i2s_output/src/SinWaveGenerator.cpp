@@ -9,14 +9,14 @@ SinWaveGenerator::SinWaveGenerator(int sample_rate, int frequency, float magnitu
     m_current_position = 0;
 }
 
-void SinWaveGenerator::getSamples(int16_t *samples, int number_frames)
+void SinWaveGenerator::getFrames(Frame_t *frames, int number_frames)
 {
     float full_wave_samples = m_sample_rate / m_frequency;
     float step_per_sample = M_TWOPI / full_wave_samples;
     // fill the buffer with data from the file wrapping around if necessary
     for (int i = 0; i < number_frames; i++)
     {
-        samples[i * 2 + 1] = samples[i * 2] = 16384 * m_magnitude * sin(m_current_position);
+        frames[i].left = frames[i].right = 16384 * m_magnitude * sin(m_current_position);
         m_current_position += step_per_sample;
         // wrap around to maintain numerical stability
         if (m_current_position > M_TWOPI)

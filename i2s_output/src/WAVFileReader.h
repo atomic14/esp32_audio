@@ -16,7 +16,7 @@ public:
     WAVFileReader(const char *file_name);
     ~WAVFileReader();
     int sampleRate() { return m_sample_rate; }
-    void getSamples(int16_t *samples, int number_frames);
+    void getFrames(Frame_t *frames, int number_frames);
 };
 
 #endif

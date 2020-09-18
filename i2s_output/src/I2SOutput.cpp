@@ -8,14 +8,18 @@
 #include "SampleSource.h"
 #include "I2SOutput.h"
 
+// number of frames to try and send at once (a frame is a left and right sample)
+#define NUM_FRAMES_TO_SEND 128
+
 void i2sWriterTask(void *param)
 {
     I2SOutput *output = (I2SOutput *)param;
+    int availableBytes = 0;
+    int buffer_position = 0;
+    Frame_t frames[128];
     while (true)
     {
-        int availableBytes = 0;
-        int16_t samples[256];
-        // wait for some data to arrive on the queue
+        // wait for some data to be requested
         i2s_event_t evt;
         if (xQueueReceive(output->m_i2sQueue, &evt, portMAX_DELAY) == pdPASS)
         {
@@ -27,15 +31,20 @@ void i2sWriterTask(void *param)
                     if (availableBytes == 0)
                     {
                         // get some frames from the wave file - a frame consists of a 16 bit left and right sample
-                        output->m_sample_generator->getSamples(samples, 128);
-                        availableBytes = 512;
+                        output->m_sample_generator->getFrames(frames, NUM_FRAMES_TO_SEND);
+                        // how maby bytes do we now have to send
+                        availableBytes = NUM_FRAMES_TO_SEND * sizeof(uint32_t);
+                        // reset the buffer position back to the start
+                        buffer_position = 0;
                     }
                     // do we have something to write?
                     if (availableBytes > 0)
                     {
                         // write data to the i2s peripheral
-                        i2s_write(output->m_i2sPort, (void *)samples, availableBytes, &bytesWritten, portMAX_DELAY);
+                        i2s_write(output->m_i2sPort, buffer_position + (uint8_t *)frames,
+                                  availableBytes, &bytesWritten, portMAX_DELAY);
                         availableBytes -= bytesWritten;
+                        buffer_position += bytesWritten;
                     }
                 } while (bytesWritten > 0);
             }
@@ -46,7 +55,7 @@ void i2sWriterTask(void *param)
 void I2SOutput::start(i2s_port_t i2sPort, i2s_pin_config_t &i2sPins, SampleSource *sample_generator)
 {
     m_sample_generator = sample_generator;
-    // i2s config for reading from both channels of I2S
+    // i2s config for writing both channels of I2S
     i2s_config_t i2sConfig = {
         .mode = (i2s_mode_t)(I2S_MODE_MASTER | I2S_MODE_TX),
         .sample_rate = m_sample_generator->sampleRate(),
@@ -55,10 +64,7 @@ void I2SOutput::start(i2s_port_t i2sPort, i2s_pin_config_t &i2sPins, SampleSourc
         .communication_format = (i2s_comm_format_t)(I2S_COMM_FORMAT_I2S),
         .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
         .dma_buf_count = 4,
-        .dma_buf_len = 512,
-        .use_apll = true,
-        // .tx_desc_auto_clear = false,
-    };
+        .dma_buf_len = 64};
 
     m_i2sPort = i2sPort;
     //install and start i2s driver

@@ -8,7 +8,11 @@ And for the two I2S boards (SPH0645 and INMP441) [here](https://www.youtube.com/
 
 [![Demo Video](https://img.youtube.com/vi/3g7l5bm7fZ8/0.jpg)](https://www.youtube.com/watch?v=3g7l5bm7fZ8)
 
-This project demonstrates how to use the ESP32 built-in Analog to Digital Converters and I2S for capturing audio data.
+For audio output we can use the MAX98357A boards - there's a explanatory video [here](https://youtu.be/lkxiBaiH3GY)
+
+[![Demo Video](https://img.youtube.com/vi/lkxiBaiH3GY/0.jpg)](https://www.youtube.com/watch?v=lkxiBaiH3GY)
+
+This project demonstrates how to use the ESP32 built-in Analog to Digital Converters and I2S for capturing audio data and for audio output..
 
 There are four projects in this repository: `loop_sampling`, `i2s_sampling`, `i2s_output` and `server`.
 

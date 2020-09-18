@@ -23,8 +23,10 @@ void setup()
   SPIFFS.begin();
 
   Serial.println("Created sample source");
+
+  // sampleSource = new SinWaveGenerator(40000, 10000, 0.75);
+
   sampleSource = new WAVFileReader("/sample.wav");
-  // sampleSource = new SinWaveGenerator(8000, 440, 0.5);
 
   Serial.println("Starting I2S Output");
   output = new I2SOutput();
