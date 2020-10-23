@@ -20,6 +20,32 @@ There are four projects in this repository: `loop_sampling`, `i2s_sampling`, `i2
 
 This is a simple `node` server that writes the samples received from the ESP32 to a file.
 
+Check the README.md file in the server folder for detailed instructsions.
+
+You will need to have [node](https://nodejs.org/en/download/) and [yarn](https://classic.yarnpkg.com/en/docs/install/#mac-stable). You may already have these on your system.
+
+Check with:
+
+```
+node --version
+yarn --version
+```
+
+Then just run:
+
+```
+cd server
+yarn
+```
+
+To install the dependencies. And
+
+```
+cd server
+yarn start
+```
+When you want to run the server.
+
 ## loop_sampling
 
 This project shows how to use the Arduino `analogRead` function and the Espressif `adc1_get_raw` function.
