@@ -13,8 +13,8 @@
     "typescript": "^3.9.7"
   },
   "scripts": {
-    "prebuild": "tslint -c tslint.json -p tsconfig.json --fix",
-    "build": "tsc",
+    "prebuild": "yarn run tslint -c tslint.json -p tsconfig.json --fix",
+    "build": "yarn run tsc",
     "prestart": "yarn run build",
     "start": "node .",
     "prettier": "prettier --config .prettierrc 'src/**/*.ts' --write"
