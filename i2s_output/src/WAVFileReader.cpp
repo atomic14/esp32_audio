@@ -28,6 +28,10 @@ typedef struct
 WAVFileReader::WAVFileReader(const char *file_name)
 {
     m_file = SPIFFS.open("/sample.wav", "r");
+    if (!m_file)
+    {
+        Serial.printf("Failed to open file! Have you uploaed the file system?");
+    }
     // read the WAV header
     wav_header_t wav_header;
     m_file.read((uint8_t *)&wav_header, sizeof(wav_header_t));
