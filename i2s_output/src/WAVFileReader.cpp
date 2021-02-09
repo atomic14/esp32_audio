@@ -2,6 +2,7 @@
 #include <FS.h>
 #include "WAVFileReader.h"
 
+#pragma pack(push, 1)
 typedef struct
 {
     // RIFF Header
@@ -24,10 +25,11 @@ typedef struct
     int data_bytes;      // Number of bytes in data. Number of samples * num_channels * sample byte size
     // uint8_t bytes[]; // Remainder of wave file is bytes
 } wav_header_t;
+#pragma pack(pop)
 
 WAVFileReader::WAVFileReader(const char *file_name)
 {
-    m_file = SPIFFS.open("/sample.wav", "r");
+    m_file = SPIFFS.open(file_name, "r");
     if (!m_file)
     {
         Serial.printf("Failed to open file! Have you uploaed the file system?");
