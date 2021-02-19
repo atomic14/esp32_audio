@@ -1,3 +1,4 @@
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Z8Z734F5Y)
 # ESP32 I2S ADC Sampling
 
 Explanatory video of the analog boards here (MAX9814 and MAX4466) [here](https://www.youtube.com/watch?v=pPh3_ciEmzs)
