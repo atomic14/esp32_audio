@@ -2,6 +2,7 @@
 #include <FS.h>
 #include "WAVFileReader.h"
 
+#pragma pack(push, 1)
 typedef struct
 {
     // RIFF Header
@@ -24,10 +25,16 @@ typedef struct
     int data_bytes;      // Number of bytes in data. Number of samples * num_channels * sample byte size
     // uint8_t bytes[]; // Remainder of wave file is bytes
 } wav_header_t;
+#pragma pack(pop)
 
 WAVFileReader::WAVFileReader(const char *file_name)
 {
-    m_file = SPIFFS.open("/sample.wav", "r");
+    if (!SPIFFS.exists(file_name))
+    {
+        Serial.println("****** Failed to open file! Have you uploaed the file system?");
+        return;
+    }
+    m_file = SPIFFS.open(file_name, "r");
     // read the WAV header
     wav_header_t wav_header;
     m_file.read((uint8_t *)&wav_header, sizeof(wav_header_t));
@@ -60,10 +67,7 @@ void WAVFileReader::getFrames(Frame_t *frames, int number_frames)
             m_file.seek(44);
         }
         // read in the next sample to the left channel
-        uint8_t left;
-        m_file.read(&left, sizeof(uint8_t));
-        // only shift it by 7 to the left so it's not so loud!
-        frames[i].left = left << 7;
+        m_file.read((uint8_t *)(&frames[i].left), sizeof(int16_t));
         // if we only have one channel duplicate the sample for the right channel
         if (m_num_channels == 1)
         {
@@ -71,9 +75,8 @@ void WAVFileReader::getFrames(Frame_t *frames, int number_frames)
         }
         else
         {
-            uint8_t right;
-            m_file.read(&right, sizeof(uint8_t));
-            frames[i].right = right << 7;
+            // otherwise read in the right channel sample
+            m_file.read((uint8_t *)(&frames[i].right), sizeof(int16_t));
         }
     }
 }
