@@ -66,17 +66,22 @@ void WAVFileReader::getFrames(Frame_t *frames, int number_frames)
         {
             m_file.seek(44);
         }
+        int16_t left;
+        int16_t right;
         // read in the next sample to the left channel
-        m_file.read((uint8_t *)(&frames[i].left), sizeof(int16_t));
+        m_file.read((uint8_t *)(&left), sizeof(int16_t));
         // if we only have one channel duplicate the sample for the right channel
         if (m_num_channels == 1)
         {
-            frames[i].right = frames[i].left;
+            right = left;
         }
         else
         {
             // otherwise read in the right channel sample
-            m_file.read((uint8_t *)(&frames[i].right), sizeof(int16_t));
+            m_file.read((uint8_t *)(&right), sizeof(int16_t));
         }
+        // we need unsigned bytes for the ADC
+        frames[i].left = left + 32768;
+        frames[i].right = right + 32768;
     }
 }
