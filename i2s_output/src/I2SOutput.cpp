@@ -9,14 +9,14 @@
 #include "I2SOutput.h"
 
 // number of frames to try and send at once (a frame is a left and right sample)
-#define NUM_FRAMES_TO_SEND 128
+#define NUM_FRAMES_TO_SEND 512
 
 void i2sWriterTask(void *param)
 {
     I2SOutput *output = (I2SOutput *)param;
     int availableBytes = 0;
     int buffer_position = 0;
-    Frame_t frames[128];
+    Frame_t *frames = (Frame_t *)malloc(sizeof(Frame_t) * NUM_FRAMES_TO_SEND);
     while (true)
     {
         // wait for some data to be requested
@@ -64,7 +64,7 @@ void I2SOutput::start(i2s_port_t i2sPort, i2s_pin_config_t &i2sPins, SampleSourc
         .communication_format = (i2s_comm_format_t)(I2S_COMM_FORMAT_I2S),
         .intr_alloc_flags = ESP_INTR_FLAG_LEVEL1,
         .dma_buf_count = 4,
-        .dma_buf_len = 64};
+        .dma_buf_len = 1024};
 
     m_i2sPort = i2sPort;
     //install and start i2s driver
