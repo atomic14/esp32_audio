@@ -1,7 +1,7 @@
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Z8Z734F5Y)
-# ESP32 I2S ADC Sampling
+# ESP32 I2S Audio
 
-Explanatory video of the analog boards here (MAX9814 and MAX4466) [here](https://www.youtube.com/watch?v=pPh3_ciEmzs)
+Explanatory video of the analog mic boards here (MAX9814 and MAX4466) [here](https://www.youtube.com/watch?v=pPh3_ciEmzs)
 
 [![Demo Video](https://img.youtube.com/vi/pPh3_ciEmzs/0.jpg)](https://www.youtube.com/watch?v=pPh3_ciEmzs)
 
