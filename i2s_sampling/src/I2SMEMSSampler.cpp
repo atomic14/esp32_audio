@@ -1,5 +1,6 @@
 #include "I2SMEMSSampler.h"
 #include "soc/i2s_reg.h"
+#include <algorithm>
 
 I2SMEMSSampler::I2SMEMSSampler(
     i2s_port_t i2s_port,
@@ -25,15 +26,19 @@ void I2SMEMSSampler::configureI2S()
 
 int I2SMEMSSampler::read(int16_t *samples, int count)
 {
-    // read from i2s
-    int32_t *raw_samples = (int32_t *)malloc(sizeof(int32_t) * count);
-    size_t bytes_read = 0;
-    i2s_read(m_i2sPort, raw_samples, sizeof(int32_t) * count, &bytes_read, portMAX_DELAY);
-    int samples_read = bytes_read / sizeof(int32_t);
-    for (int i = 0; i < samples_read; i++)
+    int32_t raw_samples[256];
+    int sample_index = 0;
+    while (count > 0)
     {
-        samples[i] = (raw_samples[i] & 0xFFFFFFF0) >> 11;
+        size_t bytes_read = 0;
+        i2s_read(m_i2sPort, (void **)raw_samples, sizeof(int32_t) * std::min(count, 256), &bytes_read, portMAX_DELAY);
+        int samples_read = bytes_read / sizeof(int32_t);
+        for (int i = 0; i < samples_read; i++)
+        {
+            samples[sample_index] = (raw_samples[i] & 0xFFFFFFF0) >> 11;
+            sample_index++;
+            count--;
+        }
     }
-    free(raw_samples);
-    return samples_read;
+    return sample_index;
 }

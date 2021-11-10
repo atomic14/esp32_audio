@@ -52,7 +52,7 @@ i2s_pin_config_t i2sPins = {
     .data_in_num = GPIO_NUM_33};
 
 // how many samples to read at once
-const int SAMPLE_SIZE = 8192;
+const int SAMPLE_SIZE = 16384;
 
 // send data to a remote address
 void sendData(WiFiClient *wifiClient, HTTPClient *httpClient, const char *url, uint8_t *bytes, size_t count)
