@@ -1,4 +1,8 @@
-[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/Z8Z734F5Y)
+# This code is now pretty old
+
+It's probably still useful, but I would recomment people check out the fantastic work here: https://github.com/pschatzmann/arduino-audio-tools
+
+
 # ESP32 I2S Audio
 
 Explanatory video of the analog mic boards here (MAX9814 and MAX4466) [here](https://www.youtube.com/watch?v=pPh3_ciEmzs)
